@@ -190,6 +190,17 @@ function calculateCostImapctOnEconomy() {
     $responseJSON->severeImpact->dollarsInFlight = $saveSeverDollarInFlight;
 }
 
+function object_to_array($data){
+  if(is_array($data) || is_object($data)){
+      $result = array();
+      foreach( $data as $key => $value){
+          $result[$key] = object_to_array($value);
+      }
+      return $result;
+  }
+  return $data;
+}
+
 function initCovidEstimator($data) {
       global $sampleCaseData, $responseJSON;
     if ($data !== null) {
@@ -211,8 +222,8 @@ function initCovidEstimator($data) {
     calculateCostImapctOnEconomy();
 
     // return responses
-   $newRes = json_encode((array) $responseJSON);
-    return  utf8_encode($newRes);
+    $newRes = object_to_array($responseJSON);
+    return  ($newRes);
   }
    // throw new Error('Error in data Entry');
 }
