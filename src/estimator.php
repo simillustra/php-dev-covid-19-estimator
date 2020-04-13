@@ -8,10 +8,10 @@ define('PERCENTAGE_CASES_NEEDS_FOR_ICU_CARE', 0.05);
 define('PERCENTAGE_CASES_NEEDS_FOR_VENTILATION', 0.02);
 
 $sampleCaseData = new stdClass();
-$estimatedDataStored = new stdClass();
-$estimatedDataStored->data = new stdClass();
-$estimatedDataStored->impact = new stdClass();
-$estimatedDataStored->severeImpact = new stdClass();
+$responseJSON = new stdClass();
+$responseJSON->data = new stdClass();
+$responseJSON->impact = new stdClass();
+$responseJSON->severeImpact = new stdClass();
 
 /**
  * @function calculateCurrentlyInfected
@@ -21,13 +21,13 @@ $estimatedDataStored->severeImpact = new stdClass();
  */
 
 function calculateCurrentlyInfected() {
-    global $sampleCaseData, $estimatedDataStored;
+    global $sampleCaseData, $responseJSON;
     // update impact
     $saveCurrentlyInfected = $sampleCaseData->reportedCases * NORMAL_INFECTION_GROWTH_RATE;
-    $estimatedDataStored->impact->currentlyInfected = $saveCurrentlyInfected;
+    $responseJSON->impact->currentlyInfected = $saveCurrentlyInfected;
     // update severeImpact
     $saveSeverelyInfected = $sampleCaseData->reportedCases * SEVERE_INFECTION_GROWTH_RATE;
-    $estimatedDataStored->severeImpact->currentlyInfected = $saveSeverelyInfected;
+    $responseJSON->severeImpact->currentlyInfected = $saveSeverelyInfected;
 }
 
 /**
@@ -88,15 +88,15 @@ function calculateIAndReturnPeriods($numberOfDays, $periodType) {
  */
 
 function calculatePossibleInfectionGrowthRate() {
-      global $sampleCaseData, $estimatedDataStored;
+      global $sampleCaseData, $responseJSON;
       
     $INFECTION_RATE_PER_PERIOD = calculateInfectionRatesPerPeriod($sampleCaseData->timeToElapse, $sampleCaseData->periodType);
     // update impact
-    $saveNormalSpreadRate = $estimatedDataStored->impact->currentlyInfected * $INFECTION_RATE_PER_PERIOD;
-    $estimatedDataStored->impact->infectionsByRequestedTime = $saveNormalSpreadRate;
+    $saveNormalSpreadRate = $responseJSON->impact->currentlyInfected * $INFECTION_RATE_PER_PERIOD;
+    $responseJSON->impact->infectionsByRequestedTime = $saveNormalSpreadRate;
     // update severeImpact
-    $saveSevereSpreadRate = $estimatedDataStored->severeImpact->currentlyInfected * $INFECTION_RATE_PER_PERIOD;
-    $estimatedDataStored->severeImpact->infectionsByRequestedTime = $saveSevereSpreadRate;
+    $saveSevereSpreadRate = $responseJSON->severeImpact->currentlyInfected * $INFECTION_RATE_PER_PERIOD;
+    $responseJSON->severeImpact->infectionsByRequestedTime = $saveSevereSpreadRate;
 }
 
 /**
@@ -107,14 +107,14 @@ function calculatePossibleInfectionGrowthRate() {
  */
 
 function calculateSevereCases() {
-      global $sampleCaseData, $estimatedDataStored;
+      global $sampleCaseData, $responseJSON;
     // update impact
-    $estimatedNormalPositive = $estimatedDataStored->impact->infectionsByRequestedTime * PERCENTAGE_POSITIVE_CASES;
-    $estimatedDataStored->impact->severeCasesByRequestedTime = $estimatedNormalPositive;
+    $estimatedNormalPositive = $responseJSON->impact->infectionsByRequestedTime * PERCENTAGE_POSITIVE_CASES;
+    $responseJSON->impact->severeCasesByRequestedTime = $estimatedNormalPositive;
 
     // update severeImpact
-    $estimatedSeverePositive = $estimatedDataStored->severeImpact->infectionsByRequestedTime * PERCENTAGE_POSITIVE_CASES;
-    $estimatedDataStored->severeImpact->severeCasesByRequestedTime = $estimatedSeverePositive;
+    $estimatedSeverePositive = $responseJSON->severeImpact->infectionsByRequestedTime * PERCENTAGE_POSITIVE_CASES;
+    $responseJSON->severeImpact->severeCasesByRequestedTime = $estimatedSeverePositive;
 }
 
 /**
@@ -125,14 +125,14 @@ function calculateSevereCases() {
  */
 
 function caclulateHospitalBedsAvailability() {
-      global $sampleCaseData, $estimatedDataStored;
+      global $sampleCaseData, $responseJSON;
     // update impact
     $HOSPITAL_BEDS_AVAILABLE = $sampleCaseData->totalHospitalBeds * PERCENTAGE_HOSPITAL_BED_AVAILABILITY;
-    $saveNormalHospitalBedAvailable = intval($HOSPITAL_BEDS_AVAILABLE - $estimatedDataStored->impact->severeCasesByRequestedTime);
-    $estimatedDataStored->impact->hospitalBedsByRequestedTime = $saveNormalHospitalBedAvailable;
+    $saveNormalHospitalBedAvailable = intval($HOSPITAL_BEDS_AVAILABLE - $responseJSON->impact->severeCasesByRequestedTime);
+    $responseJSON->impact->hospitalBedsByRequestedTime = $saveNormalHospitalBedAvailable;
     // update severeImpact
-    $saveSevereHospitalBedAvailable = intval($HOSPITAL_BEDS_AVAILABLE - $estimatedDataStored->severeImpact->severeCasesByRequestedTime);
-    $estimatedDataStored->severeImpact->hospitalBedsByRequestedTime = $saveSevereHospitalBedAvailable;
+    $saveSevereHospitalBedAvailable = intval($HOSPITAL_BEDS_AVAILABLE - $responseJSON->severeImpact->severeCasesByRequestedTime);
+    $responseJSON->severeImpact->hospitalBedsByRequestedTime = $saveSevereHospitalBedAvailable;
 }
 
 /**
@@ -143,13 +143,13 @@ function caclulateHospitalBedsAvailability() {
  */
 
 function calculationICURequirement() {
-      global $sampleCaseData, $estimatedDataStored;
+      global $sampleCaseData, $responseJSON;
     // update impact
-    $saveNormalCasesNeadingICUCare = intval($estimatedDataStored->impact->infectionsByRequestedTime * PERCENTAGE_CASES_NEEDS_FOR_ICU_CARE);
-    $estimatedDataStored->impact->casesForICUByRequestedTime = $saveNormalCasesNeadingICUCare;
+    $saveNormalCasesNeadingICUCare = intval($responseJSON->impact->infectionsByRequestedTime * PERCENTAGE_CASES_NEEDS_FOR_ICU_CARE);
+    $responseJSON->impact->casesForICUByRequestedTime = $saveNormalCasesNeadingICUCare;
     // update severeImpact
-    $saveSeverCasesNeadingICUCare = intval($estimatedDataStored->severeImpact->infectionsByRequestedTime * PERCENTAGE_CASES_NEEDS_FOR_ICU_CARE);
-    $estimatedDataStored->severeImpact->casesForICUByRequestedTime = $saveSeverCasesNeadingICUCare;
+    $saveSeverCasesNeadingICUCare = intval($responseJSON->severeImpact->infectionsByRequestedTime * PERCENTAGE_CASES_NEEDS_FOR_ICU_CARE);
+    $responseJSON->severeImpact->casesForICUByRequestedTime = $saveSeverCasesNeadingICUCare;
 }
 
 /**
@@ -160,13 +160,13 @@ function calculationICURequirement() {
  */
 
 function calculateVentilatorsRequired() {
-      global $sampleCaseData, $estimatedDataStored;
+      global $sampleCaseData, $responseJSON;
     // update impact
-    $saveNormalCasesNeedingVentilators = intval($estimatedDataStored->impact->infectionsByRequestedTime * PERCENTAGE_CASES_NEEDS_FOR_VENTILATION);
-    $estimatedDataStored->impact->casesForVentilatorsByRequestedTime = $saveNormalCasesNeedingVentilators;
+    $saveNormalCasesNeedingVentilators = intval($responseJSON->impact->infectionsByRequestedTime * PERCENTAGE_CASES_NEEDS_FOR_VENTILATION);
+    $responseJSON->impact->casesForVentilatorsByRequestedTime = $saveNormalCasesNeedingVentilators;
     // update severeImpact
-    $saveSeverCasesNeedingVentilators = intval($estimatedDataStored->severeImpact->infectionsByRequestedTime * PERCENTAGE_CASES_NEEDS_FOR_VENTILATION);
-    $estimatedDataStored->severeImpact->casesForVentilatorsByRequestedTime = $saveSeverCasesNeedingVentilators;
+    $saveSeverCasesNeedingVentilators = intval($responseJSON->severeImpact->infectionsByRequestedTime * PERCENTAGE_CASES_NEEDS_FOR_VENTILATION);
+    $responseJSON->severeImpact->casesForVentilatorsByRequestedTime = $saveSeverCasesNeedingVentilators;
 }
 
 /**
@@ -177,25 +177,25 @@ function calculateVentilatorsRequired() {
  */
 
 function calculateCostImapctOnEconomy() {
-      global $sampleCaseData, $estimatedDataStored;
+      global $sampleCaseData, $responseJSON;
     $PERIOD_IN_FOCUS = calculateIAndReturnPeriods($sampleCaseData->timeToElapse, $sampleCaseData->periodType);
     $MAJORITIY_WORKING_POPULATION = $sampleCaseData->region->avgDailyIncomePopulation;
     $DAILY_EARNINGS = $sampleCaseData->region->avgDailyIncomeInUSD;
 
     // update impact
-    $saveNormalDollarsInFlight = intval(($estimatedDataStored->impact->infectionsByRequestedTime * $MAJORITIY_WORKING_POPULATION * $DAILY_EARNINGS) / $PERIOD_IN_FOCUS);
-    $estimatedDataStored->impact->dollarsInFlight = $saveNormalDollarsInFlight;
+    $saveNormalDollarsInFlight = intval(($responseJSON->impact->infectionsByRequestedTime * $MAJORITIY_WORKING_POPULATION * $DAILY_EARNINGS) / $PERIOD_IN_FOCUS);
+    $responseJSON->impact->dollarsInFlight = $saveNormalDollarsInFlight;
     // update severeImpact
-    $saveSeverDollarInFlight = intval(($estimatedDataStored->severeImpact->infectionsByRequestedTime * $MAJORITIY_WORKING_POPULATION * $DAILY_EARNINGS) / $PERIOD_IN_FOCUS);
-    $estimatedDataStored->severeImpact->dollarsInFlight = $saveSeverDollarInFlight;
+    $saveSeverDollarInFlight = intval(($responseJSON->severeImpact->infectionsByRequestedTime * $MAJORITIY_WORKING_POPULATION * $DAILY_EARNINGS) / $PERIOD_IN_FOCUS);
+    $responseJSON->severeImpact->dollarsInFlight = $saveSeverDollarInFlight;
 }
 
 function initCovidEstimator($data) {
-      global $sampleCaseData, $estimatedDataStored;
+      global $sampleCaseData, $responseJSON;
     if ($data !== null) {
         // initialize variables
         $sampleCaseData = json_decode($data);
-        $estimatedDataStored->data = json_decode($data);
+        $responseJSON->data = json_decode($data);
 
     // compute code challenge -1
     calculateCurrentlyInfected();
@@ -211,10 +211,12 @@ function initCovidEstimator($data) {
     calculateCostImapctOnEconomy();
 
     // return responses
-    return json_encode($estimatedDataStored, true);
+   $newRes = json_encode((array) $responseJSON);
+    return  utf8_encode($newRes);
   }
    // throw new Error('Error in data Entry');
 }
+
 
 
 function covid19ImpactEstimator($data)
