@@ -211,7 +211,7 @@ function initCovidEstimator($data) {
     calculateCostImapctOnEconomy();
 
     // return responses
-    return json_encode($estimatedDataStored);
+    return json_encode("'".$estimatedDataStored."'");
   }
    // throw new Error('Error in data Entry');
 }
