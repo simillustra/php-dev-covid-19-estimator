@@ -205,6 +205,7 @@ function initCovidEstimator($data) {
       global $sampleCaseData, $responseJSON;
     if ($data !== null) {
         // initialize variables
+        print_r($data);
         $sampleCaseData =  (object) $data; //json_decode($data);
         $responseJSON->data = (object) $data; //json_decode($data);
 
