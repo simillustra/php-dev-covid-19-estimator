@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author S.A.V.I.O.U.R
+ * @description COVID-19 CODE CHALLENGE JS VERSION ENTRY
+ * @license
+ */
 // Defining covid-19 constants..........
 define('NORMAL_INFECTION_GROWTH_RATE',10);
 define('SEVERE_INFECTION_GROWTH_RATE', 50);
