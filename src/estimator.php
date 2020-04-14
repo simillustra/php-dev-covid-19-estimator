@@ -219,6 +219,7 @@ function loopArrayCreateObject($array, &$obj)
  * @returns stdClass Object
  * @description converts Array To Object
  */
+
 function convertArrayToObject($arrayInput)
 {
     $newObject = new stdClass();
@@ -231,6 +232,7 @@ function convertArrayToObject($arrayInput)
  * @returns Array
  * @description converts onjects to Array.
  */
+
 function object_to_array($data){
   if(is_array($data) || is_object($data)){
       $result = array();
@@ -241,6 +243,14 @@ function object_to_array($data){
   }
   return $data;
 }
+
+
+/**
+ * @function initCovidEstimator
+ * @param $data
+ * @returns Array
+ * @description application Entry point.
+ */
 
 function initCovidEstimator($data) {
       global $sampleCaseData, $responseJSON;
