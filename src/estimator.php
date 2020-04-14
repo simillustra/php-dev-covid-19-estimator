@@ -244,7 +244,7 @@ function initCovidEstimator($data) {
 
     // return responses
     $newRes = object_to_array($responseJSON);
-    return  json_encode($newRes);
+    return  $newRes;
   }
    // throw new Error('Error in data Entry');
 }
