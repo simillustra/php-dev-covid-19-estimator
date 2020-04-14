@@ -190,6 +190,25 @@ function calculateCostImapctOnEconomy() {
     $responseJSON->severeImpact->dollarsInFlight = $saveSeverDollarInFlight;
 }
 
+function loopArrayCreateObject($array, &$obj)
+{
+    foreach ($array as $key => $value) {
+        if (is_array($value)) {
+            $obj->$key = new stdClass();
+            loopArrayCreateObject($value, $obj->$key);
+        } else {
+            $obj->$key = $value;
+        }
+    }
+    return $obj;
+}
+
+function convertArrayToObject($arrayInput)
+{
+    $newObject = new stdClass();
+    return loopArrayCreateObject($arrayInput, $newObject);
+}
+
 function object_to_array($data){
   if(is_array($data) || is_object($data)){
       $result = array();
@@ -205,9 +224,10 @@ function initCovidEstimator($data) {
       global $sampleCaseData, $responseJSON;
     if ($data !== null) {
         // initialize variables
-        print_r($data);
-        $sampleCaseData =  (object) $data; //json_decode($data);
-        $responseJSON->data = (object) $data; //json_decode($data);
+       // print_r($data);
+        $arrayToObjConvertion = convertArrayToObject($data);
+        $sampleCaseData = $arrayToObjConvertion;
+        $responseJSON->data = $arrayToObjConvertion;
 
     // compute code challenge -1
     calculateCurrentlyInfected();
