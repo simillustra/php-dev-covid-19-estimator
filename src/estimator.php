@@ -205,8 +205,8 @@ function initCovidEstimator($data) {
       global $sampleCaseData, $responseJSON;
     if ($data !== null) {
         // initialize variables
-        $sampleCaseData = json_decode($data);
-        $responseJSON->data = json_decode($data);
+        $sampleCaseData =  (object) $data; //json_decode($data);
+        $responseJSON->data = (object) $data; //json_decode($data);
 
     // compute code challenge -1
     calculateCurrentlyInfected();
@@ -223,7 +223,7 @@ function initCovidEstimator($data) {
 
     // return responses
     $newRes = object_to_array($responseJSON);
-    return  ($newRes);
+    return  json_encode($newRes);
   }
    // throw new Error('Error in data Entry');
 }
