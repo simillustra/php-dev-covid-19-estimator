@@ -190,6 +190,12 @@ function calculateCostImapctOnEconomy() {
     $responseJSON->severeImpact->dollarsInFlight = $saveSeverDollarInFlight;
 }
 
+/**
+ * @function loopArrayCreateObject
+ * @param $array, &$obj
+ * @returns dollarsInFlight
+ * @description looops through the array to create object .
+ */
 function loopArrayCreateObject($array, &$obj)
 {
     foreach ($array as $key => $value) {
@@ -202,13 +208,24 @@ function loopArrayCreateObject($array, &$obj)
     }
     return $obj;
 }
-
+/**
+ * @function convertArrayToObject
+ * @param arrayInput
+ * @returns stdClass Object
+ * @description converts Array To Object
+ */
 function convertArrayToObject($arrayInput)
 {
     $newObject = new stdClass();
     return loopArrayCreateObject($arrayInput, $newObject);
 }
 
+/**
+ * @function object_to_array
+ * @param $data
+ * @returns Array
+ * @description converts onjects to Array.
+ */
 function object_to_array($data){
   if(is_array($data) || is_object($data)){
       $result = array();
